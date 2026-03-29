@@ -5,6 +5,7 @@
     "lib": ["es2018"],
     "strict": true,
     "esModuleInterop": true,
+    "moduleResolution": "node",
     "outDir": "dist"
   },
   "include": ["bin", "lib"]
