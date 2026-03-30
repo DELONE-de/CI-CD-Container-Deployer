@@ -8,18 +8,30 @@ import { PipelineStack } from '../lib/pipeline-stack';
 
 const app = new cdk.App();
 
-const networkStack = new NetworkStack(app, 'NetworkStack');
+const env = {
+  account: process.env.CDK_DEFAULT_ACCOUNT,
+  region: process.env.CDK_DEFAULT_REGION,
+};
 
-const ecrStack = new EcrStack(app, 'EcrStack');
+const networkStack = new NetworkStack(app, 'NetworkStack', { env });
+
+const ecrStack = new EcrStack(app, 'EcrStack', { env });
 
 const eksStack = new EksStack(app, 'EksStack', {
   vpc: networkStack.vpc,
-  env: networkStack.env,
+  env,
 });
-
-new PipelineStack(app, 'PipelineStack', {
-  vpc: networkStack.vpc,
-  env: networkStack.env,
-});
-
 eksStack.addDependency(networkStack);
+
+const pipelineStack = new PipelineStack(app, 'PipelineStack', {
+  vpc: networkStack.vpc,
+  env,
+  ecrRepositoryUri: ecrStack.repositoryUri,
+  eksClusterName: eksStack.cluster.clusterName,
+  githubConnectionArn: process.env.GITHUB_CONNECTION_ARN!,
+  githubOwner: process.env.GITHUB_OWNER!,
+  githubRepo: process.env.GITHUB_REPO!,
+});
+pipelineStack.addDependency(networkStack);
+pipelineStack.addDependency(ecrStack);
+pipelineStack.addDependency(eksStack);

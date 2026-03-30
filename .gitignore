@@ -3,3 +3,6 @@ dist
 cdk.out
 *.js
 *.d.ts
+
+# Environment variables
+.env
