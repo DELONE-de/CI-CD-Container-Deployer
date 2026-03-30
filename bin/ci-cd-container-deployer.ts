@@ -9,6 +9,17 @@ import { PipelineStack } from '../lib/pipeline-stack';
 const app = new cdk.App();
 
 const networkStack = new NetworkStack(app, 'NetworkStack');
+
 const ecrStack = new EcrStack(app, 'EcrStack');
-const eksStack = new EksStack(app, 'EksStack', { env: networkStack.env });
-new PipelineStack(app, 'PipelineStack');
+
+const eksStack = new EksStack(app, 'EksStack', {
+  vpc: networkStack.vpc,
+  env: networkStack.env,
+});
+
+new PipelineStack(app, 'PipelineStack', {
+  vpc: networkStack.vpc,
+  env: networkStack.env,
+});
+
+eksStack.addDependency(networkStack);
