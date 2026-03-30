@@ -9,7 +9,7 @@ export class EcrStack extends cdk.Stack {
     super(scope, id, props);
 
     const repo = new ecr.Repository(this, 'AppRepository', {
-      repositoryName: 'container deployer',
+      repositoryName: 'container-deployer',
       imageScanOnPush: true,
       removalPolicy: cdk.RemovalPolicy.RETAIN,
     });

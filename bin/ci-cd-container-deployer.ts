@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
+import * as dotenv from 'dotenv';
 import * as cdk from 'aws-cdk-lib';
+
+dotenv.config();
 import { NetworkStack } from '../lib/network-stack';
 import { EksStack } from '../lib/eks-stack';
 import { EcrStack } from '../lib/ecr-stack';
@@ -28,9 +31,9 @@ const pipelineStack = new PipelineStack(app, 'PipelineStack', {
   env,
   ecrRepositoryUri: ecrStack.repositoryUri,
   eksClusterName: eksStack.cluster.clusterName,
-  githubConnectionArn: process.env.GITHUB_CONNECTION_ARN!,
-  githubOwner: process.env.GITHUB_OWNER!,
-  githubRepo: process.env.GITHUB_REPO!,
+  githubConnectionArn: process.env.GITHUB_CONNECTION_ARN || '',
+  githubOwner: process.env.GITHUB_OWNER || '',
+  githubRepo: process.env.GITHUB_REPO || '',
 });
 pipelineStack.addDependency(networkStack);
 pipelineStack.addDependency(ecrStack);

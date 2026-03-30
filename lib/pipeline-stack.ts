@@ -17,13 +17,11 @@ export interface PipelineStackProps extends cdk.StackProps {
 
 export class PipelineStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: PipelineStackProps) {
-    props = {
-      ...props,
-      githubConnectionArn: props.githubConnectionArn ?? process.env.GITHUB_CONNECTION_ARN!,
-      githubOwner: props.githubOwner ?? process.env.GITHUB_OWNER!,
-      githubRepo: props.githubRepo ?? process.env.GITHUB_REPO!,
-    };
     super(scope, id, props);
+    
+    if (!props.githubConnectionArn || !props.githubOwner || !props.githubRepo) {
+      throw new Error('Missing required GitHub configuration: GITHUB_CONNECTION_ARN, GITHUB_OWNER, and GITHUB_REPO must be set');
+    }
 
     const region = this.region;
 
